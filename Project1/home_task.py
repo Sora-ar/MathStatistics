@@ -1,64 +1,77 @@
 import numpy as np
 import matplotlib.pyplot as plt
+from math import pi, sin
+
+N = 100
+x = np.linspace(-pi, pi, N)
+y = np.zeros(N, float)
+
+# Defining the rectangular pulse
+for n in range(N):
+    if -pi < x[n] < 0:
+        y[n] = -1 / 2
+    elif 0 < x[n] < pi:
+        y[n] = 1 / 2
 
 
-# Define the function for rectangular pulse
-def rectangular_pulse(t):
-    return np.where(np.abs(t) <= np.pi / 2, 1, 0)
+# Function to plot Fourier approximation for different Nf
+def fourier_approximation(Nf, x, y):
+    b = np.zeros(Nf, float)
+    z = np.zeros_like(x)
+
+    # Finding Fourier coefficients
+    for k in range(1, Nf):
+        if k % 2 == 0:
+            b[k] = 0
+        else:
+            b[k] = 2 / pi / k
+
+    # Constructing Fourier series
+    for n in range(N):
+        for k in range(1, Nf):
+            z[n] += b[k] * sin(k * x[n])
+
+    # Plotting the result
+    plt.plot(x, z, '-b', label=f'Nf = {Nf}')
+    plt.plot(x, y, '--r', label='Rectangular pulse')
+    plt.title(f'Fourier Approximation with Nf = {Nf}')
+    plt.grid(True)
+    plt.legend()
+    plt.show()
 
 
-# Fourier Series approximation for the rectangular pulse
-def fourier_series_rectangular_pulse(t, N):
-    f_approx = 0.5  # DC component (a_0 term)
-    for n in range(1, N + 1):
-        # Fourier coefficients for sine terms (b_n)
-        f_approx += (2 / (n * np.pi)) * np.sin(n * np.pi / 2) * np.sin(n * t)
-    return f_approx
+for Nf in [5, 10, 20, 30, 40, 50]:
+    fourier_approximation(Nf, x, y)
+
+# Fourier approximation for sawtooth signal
+
+N = 100
+x = np.linspace(-pi, pi, N)
+y = x
 
 
-# Time domain from -pi to pi
-t = np.linspace(-np.pi, np.pi, 1000)
+def fourier_approximation_sawtooth(Nf, x, y):
+    z = np.zeros_like(x)
 
-# Plot the Fourier approximations with different N values
-plt.figure(figsize=(10, 6))
-for N in [1, 3, 5, 10, 50]:
-    f_approx = fourier_series_rectangular_pulse(t, N)
-    plt.plot(t, f_approx, label=f'N = {N}')
+    # Calculating Fourier coefficients and constructing Fourier series
+    b = np.zeros(Nf, float)
 
-# Original rectangular pulse
-plt.plot(t, rectangular_pulse(t), 'k', label='Original Function', linewidth=2)
+    for k in range(1, Nf):
+        b[k] = -2 * ((-1) ** k) / k
 
-# Graph labeling
-plt.title('Fourier Series Approximation of a Rectangular Pulse')
-plt.xlabel('t')
-plt.ylabel('y(t)')
-plt.legend()
-plt.grid(True)
-plt.show()
+    z = np.zeros(len(x), float)
+    for k in range(1, Nf):
+        z += b[k] * np.sin(k * x)
 
-
-# Fourier Series approximation for y(t) = t
-def fourier_series_t_function(t, N):
-    f_approx = 0  # y(t) = t has no constant term
-    for n in range(1, N + 1):
-        # Fourier coefficients for sine terms (b_n)
-        f_approx += (-2 * (-1) ** n) / n * np.sin(n * t)
-    return f_approx
+    # Plotting the result
+    plt.plot(x, z, '-b', label=f'Nf = {Nf}')
+    plt.plot(x, y, '--r', label='Sawtooth signal')
+    plt.title(f'Fourier Approximation for Sawtooth Signal (Nf = {Nf})')
+    plt.grid(True)
+    plt.legend()
+    plt.show()
 
 
-# Plot the Fourier approximations for y(t) = t with different N values
-plt.figure(figsize=(10, 6))
-for N in [1, 3, 5, 10, 50]:
-    f_approx = fourier_series_t_function(t, N)
-    plt.plot(t, f_approx, label=f'N = {N}')
-
-# Original function y(t) = t
-plt.plot(t, t, 'k', label='y(t) = t', linewidth=2)
-
-# Graph labeling
-plt.title('Fourier Series Approximation of y(t) = t')
-plt.xlabel('t')
-plt.ylabel('y(t)')
-plt.legend()
-plt.grid(True)
-plt.show()
+# Test with different values of Nf
+for Nf in [5, 10, 20, 30, 40, 50]:
+    fourier_approximation_sawtooth(Nf, x, y)

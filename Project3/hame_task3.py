@@ -76,7 +76,7 @@ for disease_name, symptoms in disease_symptoms.items():
 
     # Візуалізація розподілу за симптомами
     plt.figure(figsize=(10, 6))
-    symptom_groups = ['Eye', 'Skin', 'Other']
+    symptom_groups = ['Eye', 'Skin', 'No']
     symptom_counts = [symptoms[3, 1], symptoms[3, 2], symptoms[3, 3]]
 
     plt.bar(symptom_groups, symptom_counts, color='orange')
